@@ -7,6 +7,7 @@
 \usepackage{pgfplots}
 \usepackage{eurosym}
 \usepackage{amsmath}
+\usepackage{lipsum}
 
 \title[TSP]
 {Travelling Salesman Problem}
@@ -134,6 +135,8 @@
       \item Jedoch: $n$ steigt schnell drastisch an (Fakultät)
     \end{enumerate}
 
+    \pause
+
     \begin{figure}
       \centering
       \begin{tikzpicture}[scale=0.6]
@@ -233,16 +236,106 @@
     $$x, y \geq 0$$
   \end{frame}
 
-  \begin{tikzpicture}
-    \begin{axis}[
-      title=Optimierungsproblem
-      xlabel={$x$}
-      ylabel={$y$}
-    ]
+  \begin{frame}
+    \frametitle{Graphische Repräsentation}
+    \begin{columns}[onlytextwidth]
+      \begin{column}{0.4\textwidth}
+        \begin{itemize}[<+->]
+          \item Anfänglich: Alle Werte möglich
+          \item Dann: Beschränken durch Constraints
+          \item Zusätzlich: Anzeige der Fitnessfunktion
+        \end{itemize}
+      \end{column}
+      \begin{column}{0.6\textwidth}
+        \begin{figure}
+          \centering
+          \includegraphics[width=\linewidth,height=150px,keepaspectratio]{optimization_graphic.png}
+        \end{figure}
+      \end{column}
+    \end{columns}
+  \end{frame}
 
-    \addplot{exp(2*x + 3*y)};
-      
-    \end{axis}
-  \end{tikzpicture}
+  \begin{frame}
+    \frametitle{Problem der Lösung}
+    \begin{columns}[onlytextwidth]
+      \begin{column}{0.4\textwidth}
+        \begin{itemize}[<+->]
+          \item Lösung liegt immer in den Eckbereichen der zulässigen Lösungen
+          \item Lösung liegt oft im kontinuierlichen
+          \item \textbf{Jedoch:} Für Sofaproblem sollten nur ganzzahlige Lösungen akzeptiert werden!
+        \end{itemize}
+
+        \textbf{$\rightarrow$ Andere Lösungsmethoden benötigt!}
+      \end{column}
+      \begin{column}{0.6\textwidth}
+        \begin{figure}
+          \centering
+          \includegraphics[width=\linewidth,height=150px,keepaspectratio]{mlp_solutions.png}
+        \end{figure}
+      \end{column}
+    \end{columns}
+  \end{frame}
+
+  \subsubsection{Branch and Bound}
+  \begin{frame}
+    \frametitle{Branch and Bound}
+
+    Lösungsmethode von Ganzzahligen Problemen
+    \begin{enumerate}[<+->]
+      \item Lineare Relaxierung des Problems
+      \item Verzweigen
+      \item Begrenzen
+      \item Optimalitätstest
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Branch and Bound}
+    \textbf{Beispiel}
+    $$z = x + 4 * y$$
+
+    Constraints:
+    \begin{itemize}
+      \item $5x + 8y \leq 40$
+      \item $-2x + 3y \leq 9$
+      \item $x, y \geq 0$ 
+    \end{itemize}
+
+    \pause
+    \vspace{1em}
+
+    \textit{Lösung ohne ganzzahlige Beschränkung}
+    $$x = 1\frac{17}{31}, y = 4\frac{1}{31}, z = 17\frac{21}{31}$$
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Grafische Visualisierung}
+    \begin{figure}
+      \centering
+      \includegraphics[width=\linewidth,height=150px,keepaspectratio]{example_graphical_representation.png}
+      \caption{Mögliche Lösungen und Constraints des Problems}
+    \end{figure}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Grafische Visualisierung}
+    \begin{figure}
+      \centering
+      \includegraphics[width=\linewidth,height=150px,keepaspectratio]{example_noninteger_solution.png}
+      \caption{Lösung nach linearer Relaxierung}
+    \end{figure}
+    $$x = 1\frac{17}{31}, y = 4\frac{1}{31}, z = 17\frac{21}{31}$$
+  \end{frame}
+
+  \foreach \x in {1,2,3,4,5,6,7,8,9,10,11,12}
+  {
+    \begin{frame}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\linewidth,height=150px,keepaspectratio]{branch_and_bound\x.png}
+        \caption{Branch and Bound \x}
+      \end{figure}
+    \end{frame}
+  }
 
 \end{document}
