@@ -372,6 +372,46 @@
     \end{frame}
   }
 
+  \subsubsection{Cutting Planes}
+  \begin{frame}
+    \frametitle{Cutting Planes}
+
+    \begin{itemize}
+      \item Andere Methode der Linearen Programmierung
+      \item Startpunkt ebenfalls relaxierte Lösung
+      \item Unterschied: Schnittebenen, um Lösungsraum einzuschränken
+      \item Schnittebenen sind im Allgemeinen weitere Constraint-Ungleichungen
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Anforderungen an Schnittebenen}
+
+    \begin{itemize}
+      \item Keine mögliche Lösung darf abgeschnitten werden
+      \item Die letzte, nichtganzzahlige Lösung soll abgeschnitten werden 
+    \end{itemize}
+
+    \pause
+    \textbf{Jedoch:} Pure Verwendung des Schnittebenenverfahrens
+    \pause
+    \\~\\
+
+    $\rightarrow$ \textbf{Branch and Cut}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Vorgehensweise}
+
+    Anstatt wie bei Branch and Bound zu verzweigen, sollen invalide
+    Lösungen abgeschnitten werden.
+
+    \pause
+    \vspace{2em}
+    \textbf{Aber:} Mathematisches Können notwendig, um korrekte
+    und gute Schnittebenen zu produzieren.
+  \end{frame}
+
   \begin{frame}
     \frametitle{Programme in der Praxis}
     Concorde...
