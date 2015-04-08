@@ -17,6 +17,44 @@
 \institute{DHBW Karlsruhe}
 \subject{Theorieseminar Informatik}
 
+\newcommand{\centeredimage}[2]{
+  \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth,height=150px,keepaspectratio]{#1}
+    \caption{#2}
+  \end{figure}
+}
+
+\newcommand{\imageslide}[2]{
+  \begin{frame}
+    \centeredimage{#1}{#2}
+  \end{frame}
+}
+
+\newcommand{\fullscreenimage}[1]{
+  { % all template changes are local to this group.
+    \setbeamertemplate{navigation symbols}{}
+    \begin{frame}[plain]
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[at=(current page.center)] {
+                \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{#1}
+            };
+        \end{tikzpicture}
+     \end{frame}
+  }
+}
+
+\newcommand{\sloganslide}[2]{
+  \begin{frame}
+    \begin{center}
+      \Huge #1
+      \ifx&#2&%
+        \huge #2
+      \fi
+    \end{center}
+  \end{frame}
+}
+
 \AtBeginSection[]
 {
   \begin{frame}
@@ -26,18 +64,29 @@
 }
 
 \begin{document}
+  \fullscreenimage{buyonline.jpeg} % Wir kaufen einen neuen Laptop online
+
+  \fullscreenimage{postbote.jpg} % Versand natürlich mit der Post, aber
+
+  \sloganslide{Wie sieht eigentlich die Tour des Postboten aus?}
+
+  \fullscreenimage{deutschland.png} % Planung einer Tour zu den Kunden
+
+  \imageslide{deutschland_solved.jpg}{Gelöst 2001: 15,112 Städte in Deutschland}
+
+  \imageslide{schweden_solved.jpg}{Gelöst 2004: 24,978 Städte in Schweden}
+
+  \sloganslide{Und doch NP-Vollständig?}
+
   \frame{\titlepage}
+
   \section{Definition}
   \begin{frame}
     \frametitle{Definition}
-    Ein Handlungsreisender muss mehrere Städte besuchen. Dabei soll die
-    Strecke, um alle Städte zu besuchen, möglichst kurz sein.
-    \pause
-    \begin{figure}
-      \centering
-      \includegraphics[width=\linewidth,height=150px,keepaspectratio]{alltag.png}
-      \caption{Alltag für Viele}
-    \end{figure}
+    \begin{center}
+      Ein Handlungsreisender muss mehrere Städte besuchen. Dabei soll die
+      Strecke, um alle Städte zu besuchen, möglichst kurz sein.
+    \end{center}
   \end{frame}
 
   \begin{frame}
@@ -96,27 +145,6 @@
     \end{figure}
   \end{frame}
 
-  \begin{frame}
-    \frametitle{Mathematische Betrachtung}
-    \begin{itemize}
-      \item Knotenmenge $V$
-      \item Pro Kante ein Bit $x$:
-      \begin{itemize}
-        \item $x=1 \rightarrow$ Kante ist in Tour enthalten
-        \item $x=0 \rightarrow$ Kante ist nicht in Tour enthalten 
-      \end{itemize}
-      \item
-        Pro Knoten (Stadt) genau zwei Kanten
-        $$\sum_{j \in V \backslash i}x_{i,j} = 2$$
-      \item
-        Keine Kurzkreiszyklen
-        $$\sum_{i \in S, j \notin S}x_{i,j} \geq 2$$
-    \end{itemize}
-    \pause
-    \textbf{Aufgabe ist:}
-    $$min\sum_{i \in V} \sum_{j \in V \backslash i} c_{i,j}x_{i,j}$$
-  \end{frame}
-
   \section{Komplexität}
   \begin{frame}
     \frametitle{Komplexitätsbetrachtung}
@@ -156,6 +184,102 @@
       \end{tikzpicture}
       \caption{Anzahl mögliche Verbindungen bei $n=16$}
     \end{figure}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Verbindungen}
+
+    Woher bekommt man die Informationen über Verbindungslängen?
+    \pause
+    \vspace{2em}
+
+    Dijkstra-Algorithmus für alle Städte explodiert!
+
+    \pause
+    \vspace{1em}
+
+    \textbf{Beispiel}: Bei 1000 Städten: \\~\\
+    $1000 \cdot 1000 = 1 000 000$ mögliche Verbindungen!
+    $\rightarrow 1 000 000$ Dijkstra-Läufe
+
+    \vspace{1em}
+    Laufzeit Dijkstra: $\mathcal O(n \cdot \log n + m)$ \textit{(optimiert)}
+    \\~\\
+    $n$ Anzahl der Knoten, $m$ Anzahl der Kanten
+  \end{frame}
+
+  \section{Mathematische Betrachtung}
+
+  \begin{frame}
+    \frametitle{Mathematische Betrachtung}
+    \begin{itemize}
+      \item Knotenmenge $V$
+      \item Pro Kante ein Bit $x$:
+      \begin{itemize}
+        \item $x=1 \rightarrow$ Kante ist in Tour enthalten
+        \item $x=0 \rightarrow$ Kante ist nicht in Tour enthalten 
+      \end{itemize}
+    \end{itemize}
+    \textbf{Aufgabe ist:}
+    $$min\sum_{i \in V} \sum_{j \in V \backslash i} c_{i,j}x_{i,j}$$
+  \end{frame}
+
+  \sloganslide{Ist jede somit definierte Tour valide?}
+
+  \fullscreenimage{nodes.png}
+
+  \fullscreenimage{invalid_tour.png}
+
+  \begin{frame}
+    \frametitle{Randbedingungen}
+    \begin{Large}
+      \begin{center}
+        Jeder Knoten muss exakt 2 Verbindungen haben!
+      \end{center}
+
+      \pause
+      \textbf{Deshalb:}
+      $$\sum_{j \in V \backslash i}x_{i,j} = 2$$
+    \end{Large}
+  \end{frame}
+
+  \sloganslide{Sind somit alle Touren valide?}
+
+  \fullscreenimage{kurzkreiszyklen.png}
+
+  \begin{frame}
+    \frametitle{Randbedingungen}
+    \begin{Large}
+      \begin{center}
+        Alle Knoten sollen in einer Tour miteinander verbunden sein,
+        keine \textit{Kurzkreiszyklen} sollen entstehen!
+      \end{center}
+
+      \pause
+      \textbf{Deshalb:}
+      $$\sum_{i \in S, j \notin S}x_{i,j} \geq 2$$
+    \end{Large}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Mathematische Betrachtung}
+    \begin{itemize}
+      \item Knotenmenge $V$
+      \item Pro Kante ein Bit $x$:
+      \begin{itemize}
+        \item $x=1 \rightarrow$ Kante ist in Tour enthalten
+        \item $x=0 \rightarrow$ Kante ist nicht in Tour enthalten 
+      \end{itemize}
+      \item
+        Pro Knoten (Stadt) genau zwei Kanten
+        $$\sum_{j \in V \backslash i}x_{i,j} = 2$$
+      \item
+        Keine Kurzkreiszyklen
+        $$\sum_{i \in S, j \notin S}x_{i,j} \geq 2$$
+    \end{itemize}
+    \pause
+    \textbf{Aufgabe ist:}
+    $$min\sum_{i \in V} \sum_{j \in V \backslash i} c_{i,j}x_{i,j}$$
   \end{frame}
 
   \section{Exakte Lösungen}
@@ -363,13 +487,7 @@
 
   \foreach \x in {1,2,3,4,5,6,7,8,9,10,11,12}
   {
-    \begin{frame}
-      \begin{figure}
-        \centering
-        \includegraphics[width=\linewidth,height=150px,keepaspectratio]{branch_and_bound\x.png}
-        \caption{Branch and Bound \x}
-      \end{figure}
-    \end{frame}
+    \imageslide{branch_and_bound\x.png}{Branch and Bound \x}
   }
 
   \subsubsection{Cutting Planes}
@@ -393,28 +511,36 @@
     \end{itemize}
 
     \pause
-    \textbf{Jedoch:} Pure Verwendung des Schnittebenenverfahrens
+    \textbf{Jedoch:} Pure Verwendung des Schnittebenenverfahrens sehr langsam
     \pause
     \\~\\
 
-    $\rightarrow$ \textbf{Branch and Cut}
+    $\rightarrow$ \textbf{Deshalb:} Kombination beider Ansätze zu \textit{Branch and Cut}
   \end{frame}
 
   \begin{frame}
     \frametitle{Vorgehensweise}
 
-    Anstatt wie bei Branch and Bound zu verzweigen, sollen invalide
-    Lösungen abgeschnitten werden.
+    Ähnlich wie bei Branch and Bound, jedoch wird vor Verzweigung
+    versucht, mit Schnittebenen den Lösungsraum einzugrenzen.
 
     \pause
-    \vspace{2em}
-    \textbf{Aber:} Mathematisches Können notwendig, um korrekte
-    und gute Schnittebenen zu produzieren.
+    \vspace{1em}
+
+    Nach Eingrenzung durch Schnittebenen: \\~\\
+    \textit{Ist Lösung ganzzahlig?}
+
+    \pause
+    \vspace{1em}
+
+    \textbf{Falls ja:} Lösung optimal, Abbruch
+    \pause
+    \textbf{Falls nein:} Aufsplitten wie bei Branch and Bound, rekursive Anwendung
   \end{frame}
 
   \begin{frame}
     \frametitle{Programme in der Praxis}
-    Concorde...
+    Anwendung in der Praxis mit Programm \textit{Concorde}
   \end{frame}
 
 \end{document}
