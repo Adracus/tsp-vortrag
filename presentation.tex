@@ -8,6 +8,7 @@
 \usepackage{eurosym}
 \usepackage{amsmath}
 \usepackage{lipsum}
+\usepackage{tabularx}
 
 \title[TSP]
 {Travelling Salesman Problem}
@@ -79,6 +80,17 @@
   \sloganslide{Und doch NP-Vollständig?}
 
   \frame{\titlepage}
+
+  \begin{frame}
+    \frametitle{Anwendungsbereiche}
+
+    \begin{itemize}
+      \item Tourplanung 
+      \item Logistik
+      \item Mikrochips
+      \item Genom-Sequenzierung
+    \end{itemize}
+  \end{frame}
 
   \section{Definition}
   \begin{frame}
@@ -193,14 +205,15 @@
     \pause
     \vspace{2em}
 
-    Dijkstra-Algorithmus für alle Städte explodiert!
+    Dijkstra-Algorithmus benötigt pro Strecke ca $10s$ (Trotz Einschränkungen)
 
     \pause
     \vspace{1em}
 
     \textbf{Beispiel}: Bei 1000 Städten: \\~\\
     $1000 \cdot 1000 = 1 000 000$ mögliche Verbindungen!
-    $\rightarrow 1 000 000$ Dijkstra-Läufe
+    $\rightarrow 1 000 000 \cdot 10s = 10 000 000s \approx 116 Tage$,
+    deshalb in Praxis oft 1.3 * Luftlinie
 
     \vspace{1em}
     Laufzeit Dijkstra: $\mathcal O(n \cdot \log n + m)$ \textit{(optimiert)}
@@ -423,6 +436,8 @@
           \item \textbf{Jedoch:} Für Sofaproblem sollten nur ganzzahlige Lösungen akzeptiert werden!
         \end{itemize}
 
+        \pause
+
         \textbf{$\rightarrow$ Andere Lösungsmethoden benötigt!}
       \end{column}
       \begin{column}{0.6\textwidth}
@@ -502,22 +517,30 @@
     \end{itemize}
   \end{frame}
 
+  \foreach \x in {1,2}
+  {
+    \imageslide{schnittebenen_\x.png}{Schnittebenen Veranschaulichung \x}
+  }
+
   \begin{frame}
     \frametitle{Anforderungen an Schnittebenen}
 
     \begin{itemize}
       \item Keine mögliche Lösung darf abgeschnitten werden
       \item Die letzte, nichtganzzahlige Lösung soll abgeschnitten werden 
+      \item $2^n$ Schnittebenen lösen Problem, jedoch werden typischerweise nur
+      $n$ verletzte cuts generiert, damit alle exponentiell viele Schnittebenen erfüllt sind
     \end{itemize}
 
     \pause
-    \textbf{Jedoch:} Pure Verwendung des Schnittebenenverfahrens sehr langsam
+    \textbf{Jedoch:} Lösung nicht immer ganzzahlig!
     \pause
     \\~\\
 
     $\rightarrow$ \textbf{Deshalb:} Kombination beider Ansätze zu \textit{Branch and Cut}
   \end{frame}
 
+  \section{Concorde TSP Solver}
   \begin{frame}
     \frametitle{Vorgehensweise}
 
@@ -542,5 +565,81 @@
     \frametitle{Programme in der Praxis}
     Anwendung in der Praxis mit Programm \textit{Concorde}
   \end{frame}
+
+  \begin{frame}[t]{Concorde}
+    \begin{table}\scriptsize
+    \begin{tabularx}{\textwidth}{l c c | l c c}
+      \textbf{Name} & \textbf{Time} & \textbf{Search Nodes} & \textbf{Name} & \textbf{Time} & \textbf{Search Nodes} \\
+  burma14&0.02&1& ulysses16&0.12&1 \\
+  gr17&0.04&1&  gr21&0.01&1 \\
+  ulysses22&0.29&1& gr24&0.02&1 \\
+  fri26&0.03&1& bayg29&0.05&1 \\
+  bays29&0.04&1&  dantzig42&0.09&1 \\
+  swiss42&0.05&1& att48&0.22&1 \\
+  gr48&0.18&1&  hk48&0.08&1 \\
+  eil51&0.12&1& berlin52&0.13&1 \\
+  brazil58&0.24&1&  st70&0.20&1 \\
+  eil76&0.11&1& pr76&0.60&1 \\
+  gr96&0.84&1&  rat99&0.40&1 \\
+  kroA100&0.31&1& kroB100&0.58&1 \\
+  kroC100&0.30&1& kroD100&0.33&1 \\
+  kroE100&0.75&1& rd100&0.22&1 \\
+  eil101&0.24&1&  lin105&0.22&1 \\
+  pr107&0.37&1& gr120&0.48&1 \\
+  pr124&1.04&1& bier127&0.53&1 \\
+  ch130&0.65&1& pr136&1.12&1 \\
+  gr137&2.18&1& pr144&1.01&1 \\
+  ch150&0.91&1& kroA150&1.47&1 \\
+  kroB150&2.50&3& pr152&2.98&1 \\
+  u159&0.42&1&  si175&5.75&3 \\
+  \end{tabularx}
+  \end{table}
+  \end{frame}
+
+
+  \begin{frame}[t]{Concorde}
+    \begin{table}\scriptsize
+    \begin{tabularx}{\textwidth}{l c c | l c c}
+      \textbf{Name} & \textbf{Time} & \textbf{Search Nodes} & \textbf{Name} & \textbf{Time} & \textbf{Search Nodes} \\
+  brg180&0.26&1&  rat195&6.25&3 \\
+  d198&3.83&3&  kroA200&2.24&1 \\
+  kroB200&1.06&1& gr202&2.90&1 \\
+  ts225&7.04&1& tsp225&5.18&1 \\
+  pr226&1.06&1& gr229&12.40&7 \\
+  gil262&3.61&3&  pr264&1.05&1 \\
+  a280&2.48&1&  pr299&5.33&1 \\
+  lin318&2.78&1&  rd400&25.72&9 \\
+  fl417&23.48&3&  gr431&31.94&9 \\
+  pr439&73.62&15& pcb442&9.44&9 \\
+  d493&43.13&5& att532&32.24&5 \\
+  ali535&9.50&1&  si535&21.73&3 \\
+  pa561&52.06&7&  u574&22.99&3 \\
+  rat575&70.30&17&  p654&8.57&1 \\
+  d657&83.04&13&  gr666&31.31&7 \\
+  u724&73.78&15&  rat783&16.79&1 \\
+  dsj1000&153.16&13&  pr1002&9.92&1 \\
+  si1032&107.19&1&  u1060&141.12&13 \\
+  vm1084&234.66&13& pcb1173&168.11&13 \\
+  rl1304&103.01&1&  nrw1379&108.12&7 \\
+  u1432&35.90&1&  d1655&69.08&3 \\
+  pr2392&35.04&1
+    \end{tabularx}
+  \end{table}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Fazit - Trotz allem NP-Schweres Problem}
+
+    \Large Euklidische TSP-Probleme mit zufälligen Knoten oder typischen TSP-Anwendungen
+    können sehr schnell gelöst werden
+
+    \pause
+    \vspace{2em}
+
+    \Large Bei Übersetzung eines anderen schwierigen Optimierungsproblem in TSP jedoch
+    sehr schwer zu lösen!
+  \end{frame}
+
+  \sloganslide{Vielen Dank für eure Aufmerksamkeit!}
 
 \end{document}
