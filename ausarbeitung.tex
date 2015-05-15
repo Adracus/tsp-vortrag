@@ -7,9 +7,19 @@
 \usepackage{pgfplots}
 \usepackage{amssymb}
 \pagestyle{headings}
+\usepackage{eurosym}
 
 
 \begin{document}
+
+\title{Exakte Lösung von TSP-Problemen}
+\author{Axel Christ\\
+  DHBW Karlsruhe,\\
+  TINF12B2,\\
+  Seminar Theoretische Informatik}
+\date{\today}
+\maketitle
+\newpage
 
 \tableofcontents
 \newpage
@@ -214,7 +224,7 @@ effizienteres Verfahren muss also bestimmt werden.
 \subsection{Lineare Programmierung}
 
 Ein Verfahren, das bei erster Betrachtung nicht als ein Verfahren zur Lösung
-des TSPs anmutet ist die Lineare Programmierung. Bei der Linearen Programmierung
+des TSPs anmutet, ist die Lineare Programmierung. Bei der Linearen Programmierung
 werden Probleme mit einer Zielfunktion und mehreren Nebenbedingungen,
 sogenannten \textit{Constraints} gelöst.
 
@@ -226,5 +236,195 @@ einzelnen Constraintgleichungen. Ziel ist es, einen
 zulässigen Vektor $x$ zu finden, der das Standardskalarprodukt
 $c^Tx = c_1x_1 + \ldots + c_nx_n$ maximiert. Falls man minimieren statts
 maximieren will, so multipliziert man $c$ mit $-1$. 
+
+\paragraph{Beispiel}
+Ein Beispiel zu einem Problem der linearen Programmierung ist die Produktionsplanung
+einer Möbelfirma:
+
+Diese Möbelfirma stellt zwei unterschiedliche Sofas her: Ein normales und ein
+Sondermodell.
+
+Pro normalem Modell verdient die Firma 500\euro, ein Sondermodell bringt 300\euro.
+
+Die Herstellung des regulären Modells benötigt zwei Stunden, die des Sondermodells
+drei.
+
+Drei Arbeiter arbeiten pro Tag jeweils 8 Stunden für die Möbelfabrik.
+
+Der Bedarf an normalen Sofas pro tag ist maximal sechs, bei den Sondermodellen werden
+täglich maximal acht benötigt.
+
+Die Optimierungsaufgabe hierbei ist es, den Profit der Möbelfirma zu maximieren.
+Um dieses Ziel zu erreichen, muss man zunächst die Zielfunktion und die Constraints
+herauslesen. In diesem Falle sind die Constraints folgende:
+
+\begin{enumerate}
+  \item Arbeitszeit der Arbeiter: Jeder Arbeiter arbeitet täglich 8 Stunden,
+  somit stehen insgesamt $3 \cdot 8 = 24$ Stunden für die Herstellung von
+  Sofas pro tag. Da das Standardsofa $x$ jeweils zwei Stunden für die Herstellung
+  benötigt und das Sondersofa $y$ jeweils drei Stunden, lässt sich daraus folgende
+  Gleichung formulieren:
+  $$2x + 3y \leq 24$$
+
+  \item Nachfrage: Da vom Standardsofa maximal sechs Stück und vom Sondersofa
+  maximal acht Stück benötigt werden, dürfen die Werte für $x$ und $y$ nicht
+  größer als die entsprechenden Randwerte werden:
+  $$x \leq 6$$
+  $$y \leq 8$$
+
+  \item Nicht-Negative Werte: Eine Randbedingung, die sich etwas schwieriger
+  ablesen lässt, aber auch erforderlich ist, ist, dass die Werte für $x$ und $y$
+  jeweils nicht negativ sein dürfen. Somit gilt noch:
+  $$x \geq 0$$
+  $$y \geq 0$$
+\end{enumerate}
+
+Zusätzlich zu den Constraintwerten muss auch die Zielfunktion bestimmt werden.
+Die Zielfunktion stellt die Maximierung des Profits durch verkaufte Einheiten dar:
+
+$$f(x) = 500x \cdot 300y$$
+
+Grafisch würde das Problem wie in Abbildung \ref{img:graphical_problem} aussehen
+(die grünen Punkte stellen ganzzahlige Lösungen dar).
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth,height=150px,keepaspectratio]{example_graphical_representation.png}
+  \caption{Problemdarstellung Produktionsplanung}
+  \label{img:graphical_problem}
+\end{figure}
+
+\subsubsection{Simplex-Algorithmus}
+Wie kann nun dieses Problem gelöst werden? Generell sind bei Optimierungsproblemen
+die Lösungen immer an den Kanten des zulässigen Raumes. Ein Algorithmus, der dieses
+Problem auch für Gleichungen mit mehr als zwei Dimensionen wie im vorher beschriebenen
+Problem löst (1. Dimension: Standardsofa $x$, 2. Dimension: Sondersofa $y$) ist der
+sogenannte \textit{Simplex-Algorithmus}. Stellt man sich den Lösungsraum eines
+$n$-dimensionalen Problems als ein $n$-dimensionales Polyeder vor, so beginnt
+der Simplex-Algorithmus mit einer Ecke (einer zulässigen Startlösung) und springt
+solange von Ecke zu Ecke des Polyeders, wie keine Verbesserung mehr möglich ist.
+Der Simplex-Algorithmus hat zwar eine schlechtere Laufzeit als manche andere Methoden
+(wie z.B. das \textit{Innere-Punkte-Verfahren}), jedoch kann mit dem Simplex-Algorithmus
+eine berechnete Lösung beim Hinzufügen einer Constraint-Bedingung verwendet werden,
+was dem Simplex-Algorithmus einen erheblichen Laufzeitvorteil gibt.
+
+\subsubsection{Branch and Bound}
+Würde man nun mit dem Simplex-Algorithmus eine Lösung für das Sofaproblem berechnen,
+so würde man auf eine Lösung im kontinuierlichen treffen, wie etwa $x = 1,78$ und
+$y = 2,97$. Diese Lösung ist für die Praxis untauglich, da keine $1,78$ Standardsofas,
+sondern nur ganze Sofas verkauft werden können. Wie kann man nun also auf ganzzahlige
+Lösungen ausgehend von der Lösung im kontinuierlichen gelangen?
+Ein Verfahren hierfür ist das sogenannte \textit{Branch and Bound}. Bei Branch
+and Bound ist der Ausgangspunkt eine relaxierte Lösung im kontinuierlichen,
+wie etwa die oben genannte Lösung mit $x = 1,78$ und $y = 2,97$.
+Basierend auf dieser Lösung wird in einem Schritt in einen Bereich größer
+gleich der nächsten Ganzzahl und in einen kleiner gleich der nächsten
+Ganzzahl verzweigt. Für $x = 1,78$ wird somit in $x \leq 1$ und in $x \geq 2$
+verzweigt (siehe \ref{img:branching}).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth,height=150px,keepaspectratio]{branching.png}
+  \caption{Beispiel Branching}
+  \label{img:branching}
+\end{figure}
+
+Die Verzweigungsbedingung wird jeweils in die Constraintbedingungen
+der weiteren Ausführungsstränge mit aufgenommen. In diesen Substrängen wird
+dann wiederrum eine (möglicherweise nicht ganzzahlige) Lösung berechnet,
+z.B. mit dem Simplex-Algorithmus. Alle Lösungen eines Stranges können, im Bezug
+auf ihre Güte in der Zielfunktion, nicht besser als die relaxierte
+Lösung $z$ der Verzweigung sein. Somit kann man hier auch wiederrum Verzweigungen
+einschränken, indem man die Optimalitätsschranke mit einem bisherigen Ergebnis
+vergleicht. Sollte etwa ein Strang schon ein Ergebnis mit z.B. dem Wert $13$
+geliefert haben, so kann man alle Stränge verwerfen, deren Optimalitätsschranke
+$\leq 13$ ist. Die Teilstränge werden somit nun immer weiter verzweigt, solange
+sie nicht unter eine Optimalitätsschranke fallen (bei einer bisher gefundenen
+Lösung) bis eine ganzzahlige Lösung gefunden wird.
+
+Zusammenfassend lässt sich das Verfahren somit wie folgt beschreiben:
+
+\begin{enumerate}
+  \item Berechnen einer relaxierten Lösung mittels eines Algorithmus
+  zur Lösung eines Linearen Problems, z.B. Simplex
+  \item Falls Lösung $z_{neu} \leq z_{bereits gefunden}$ kannn dieser
+  Strang bereits abgebrochen werden
+  \item Falls Lösung nicht ganzzahlig: Weiteres Verzweigen und zurück
+  zu 1., falls Lösung
+  ganzzahlig: beenden dieses Stranges mit Lösung $z_{neu}$
+\end{enumerate}
+
+Eine Verzweigung kann auch zu keiner Lösung führen wenn sie außerhalb
+dem erlaubten Lösungsbereich ist. In diesem Fall gibt es für einen Substrang
+keine Lösung $z$.
+Das Branch and Bound Verfahren führt zwar zu einer Lösung (oder auch keiner,
+falls es keine Lösung gibt) aber dafür sind möglicherweise viele Verzweigungen
+notwendig. Da bei jeder Verzweigung ein LP gelöst werden muss, schießt
+die Laufzeit des gesamten Verfahrens in die Höhe.
+
+\subsubsection{Schnittebenenverfahren}
+Das Schnittebenenverfahren (engl. \textit{Cutting planes}) ist eine andere
+Methode der Linearen Programmierung. Hierbei ist der Startpunkt des Verfahrens
+ebenfalls eine relaxierte Lösung (siehe \ref{img:cutting_planes_1}),
+es sollen aber nun schrittweise Schnittebenen
+in Form von Nebenbedingungen hinzugefügt werden, um die letzte, nicht-ganzzahlige Lösung
+abzuschneiden (siehe \ref{img:cutting_planes_2}).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth,height=150px,keepaspectratio]{schnittebenen_1.png}
+  \caption{Ausganslösung und Lösungsraum Schnittebenenverfahren}
+  \label{img:cutting_planes_1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth,height=150px,keepaspectratio]{schnittebenen_2.png}
+  \caption{Einfügen einer korrekten Schnittebene}
+  \label{img:cutting_planes_2}
+\end{figure}
+
+Dabei darf keine mögliche, ganzzahlige Lösung abgeschnitten werden.
+Im Allgemeinen wird ein Problem durch $2^n$ Schnittebenen gelöst, jedoch werden
+typischerweise nur $n$ verletzte Schnittebenen generiert, damit alle exponentiell
+vielen Schnittebenen erfüllt sind. Ein Nachteil des Schnittebenenverfahrens
+ist, dass selbst nach dem Einfügen der Schnittebenen keine ganzzahlige Lösung
+besteht.
+
+\subsubsection{Branch and Cut}
+Um die Schwächen des Schnittebenenverfahrens und der Branch and Bound-Methode
+zu adressieren (hohe Laufzeit, teilweise nicht-ganzzahlige Lösungen) wurden
+beide Verfahren miteinander zum \textit{Branch and Cut} Verfahren kombiniert.
+Dieses Verfahren beginnt auch bei einer relaxierten Lösung, nur wird hier
+zunächst versucht mit Schnittebenen zu einer ganzzahligen Lösung zu kommen,
+um nicht verzweigen zu müssen und somit erneut ein LP lösen zu müssen. Sollte
+nach Anwendung der Schnittebenen keine ganzzahlige Lösung entstehen, so wird,
+wie bei Branch and Bound, in zwei Substränge verzweigt, auf die das Verfahren
+dann wiederum angewandt wird.
+Insgesamt resultiert dies in deutlich geringeren Laufzeiten.
+
+\section{Praktische Anwendungen mit Concorde}
+Eine bekannte Umsetzung dieser Algorithmen erfolgte im Programm \textit{Concorde}.
+Concorde wurde von David Applegate, Robert E. Bixby, Vašek Chvátal und William J. Cook
+in C entwickelt und ist eines der besten exakten TSP-Lösungsprogramme.
+Concorde verwendet grundlegend auch das Branch and Cut Verfahren.
+Dabei lässt Concorde mehrere Formen der Relaxierung
+zu: So werden die $2^n$ Bedingungen gegen
+Kurzkreiszyklen nicht direkt komplett eingesetzt, sondern erst Schritt für Schritt.
+Zudem lässt Concorde es zu, dass Kanten zwischen zwei Knoten kontinuierlich gewählt
+werden können, wie zum Beispiel $0.5 \cdot$ Kante A. Um nicht alle Kanten von Beginn
+an als mögliche Kanten zu behandeln,
+verwendet Concorde die \textit{Delaunay-Triangulation}.
+Die Delaunay-Triangulation ist ein Verfahren, um aus einer Punktemenge ein Dreiecksnetz
+zu erstellen. Für die Lösung eines TSP liefert das den Vorteil, dass alle Kanten, die
+in diesem Netz enthalten sind, auch in der späteren, optimalen Tour enthalten sind und
+nicht alle Kanten betrachtet werden müssen.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth,height=150px,keepaspectratio]{tsp_concorde.jpg}
+  \caption{Screenshot Concorde TSP-Solver}
+  \label{img:cutting_planes_2}
+\end{figure}
+
 
 \end{document}

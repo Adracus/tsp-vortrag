@@ -3,3 +3,6 @@ ausarbeitung:
 
 pdf:
 	pdflatex presentation.tex
+
+full:
+	make ausarbeitung && make pdf && make ausarbeitung && make pdf
